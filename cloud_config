@@ -1,0 +1,186 @@
+#cloud-config
+
+coreos:
+  etcd:
+    discovery: https://discovery.etcd.io/7ea3775609c8f5ed8d0ce12d3a64cfb7 
+    addr: $private_ipv4:4001
+    peer-addr: $private_ipv4:7001
+  fleet:
+    public-ip: $private_ipv4   # used for fleetctl ssh command
+  units:
+    - name: etcd.service
+      command: start
+    - name: fleet.service
+      command: start
+    - name: userdata.service
+      command: start
+      content: |
+        Description=VMX User Data
+        
+        # Requirements
+        Requires=etcd.service
+        Requires=docker.service
+        
+        # Dependency ordering
+        After=etcd.service
+        After=docker.service
+        Before=middle.service
+        
+        [Service]
+        # Let processes take awhile to start up (for first run Docker containers)
+        TimeoutStartSec=0
+        
+        # Change killmode from "control-group" to "none" to let Docker remove
+        # work correctly.
+        KillMode=none
+        
+        # Get CoreOS environmental variables
+        EnvironmentFile=/etc/environment
+        
+        # Pre-start and Start
+        ## Directives with "=-" are allowed to fail without consequence
+        ExecStartPre=-/usr/bin/docker kill vmxuserdata
+        ExecStartPre=-/usr/bin/docker rm vmxuserdata
+        ExecStartPre=/usr/bin/docker pull visionai/vmx-userdata
+        ExecStart=/usr/bin/docker run -d --name vmxuserdata 
+        
+        # Stop
+        ExecStop=/usr/bin/docker stop vmxuserdata
+
+        [X-Fleet]
+        # Schedule on the same machine as the associated Middle Service
+        X-ConditionMachineOf=middle.service
+
+    - name: appbuilder.service
+      command: start
+      content: |
+        Description=VMX App Builder service
+
+        # Requirements
+        Requires=etcd.service
+        Requires=docker.service
+
+        # Dependency ordering
+        After=etcd.service
+        After=docker.service
+        Before=middle.service
+
+        [Service]
+        # Let processes take awhile to start up (for first run Docker containers)
+        TimeoutStartSec=0
+
+        # Change killmode from "control-group" to "none" to let Docker remove
+        # work correctly.
+        KillMode=none
+
+        # Get CoreOS environmental variables
+        EnvironmentFile=/etc/environment
+
+        # Pre-start and Start
+        ## Directives with "=-" are allowed to fail without consequence
+        ExecStartPre=-/usr/bin/docker kill vmxappbuilder
+        ExecStartPre=-/usr/bin/docker rm vmxappbuilder
+        ExecStartPre=/usr/bin/docker pull visionai/vmxappbuilder
+        ExecStart=/usr/bin/docker run -d --name vmxappbuilder 
+
+        # Stop
+        ExecStop=/usr/bin/docker stop vmxappbuilder
+
+        [X-Fleet]
+        # Schedule on the same machine as the associated Middle Service
+        X-ConditionMachineOf=middle.service
+
+    - name: mcr.service
+      command: start
+      content: |
+        Description=VMX User Data
+        
+        # Requirements
+        Requires=etcd.service
+        Requires=docker.service
+        
+        # Dependency ordering
+        After=etcd.service
+        After=docker.service
+        Before=middle.service
+        
+        [Service]
+        # Let processes take awhile to start up (for first run Docker containers)
+        TimeoutStartSec=0
+        
+        # Change killmode from "control-group" to "none" to let Docker remove
+        # work correctly.
+        KillMode=none
+        
+        # Get CoreOS environmental variables
+        EnvironmentFile=/etc/environment
+        
+        # Pre-start and Start
+        ## Directives with "=-" are allowed to fail without consequence
+        ExecStartPre=-/usr/bin/docker kill vmxmcr
+        ExecStartPre=-/usr/bin/docker rm vmxmcr
+        ExecStartPre=/usr/bin/docker pull visionai/vmx-mcr
+        ExecStart=/usr/bin/docker run -d --name vmxmcr 
+        
+        # Stop
+        ExecStop=/usr/bin/docker stop vmxmcr
+
+        [X-Fleet]
+        # Schedule on the same machine as the associated Middle Service
+        X-ConditionMachineOf=middle.service
+
+    - name: mcr.service
+      command: start
+      content: |
+        Description=VMX Middle Service
+        
+        # Requirements
+        Requires=etcd.service
+        Requires=docker.service
+        Requires=vmxmcr.service
+        Requires=vmxuserdata.service
+        Requires=vmxmiddle.service
+        Requires=vmxappbuilder.service
+        Requires=middle-discovery@%i.service
+        
+        # Dependency ordering
+        After=etcd.service
+        After=docker.service
+        After=userdata.service
+        After=appbuilder.service
+        After=mcr.service
+        Before=middle-discovery@%i.service
+        
+        [Service]
+        # Let processes take awhile to start up (for first run Docker containers)
+        TimeoutStartSec=0
+        
+        # Change killmode from "control-group" to "none" to let Docker remove
+        # work correctly.
+        KillMode=none
+        
+        # Get CoreOS environmental variables
+        EnvironmentFile=/etc/environment
+        
+        # Pre-start and Start
+        ## Directives with "=-" are allowed to fail without consequence
+        ExecStartPre=-/usr/bin/docker kill vmxmiddle.%i
+        ExecStartPre=-/usr/bin/docker rm vmxmiddle.%i
+        ExecStartPre=/usr/bin/docker pull visionai/vmxmiddle
+        ExecStart=/usr/bin/docker run -t        \
+              --volumes-from vmx-mcr            \
+              --volumes-from vmx-userdata       \
+              --volumes-from vmx-middle         \
+              --volumes-from vmx-server         \
+              --volumes-from vmx-appbuilder     \
+              -p ${COREOS_PUBLIC_IPV4}:%i:3000  \
+              --name vmx-environment%i          \
+              --rm                              \
+              visionai/vmx-environment /bin/bash -c "/vmx/middle/vmx | tee /vmx/middle/vmx_log"
+        
+        # Stop
+        ExecStop=/usr/bin/docker stop vmx-environment%i
+        
+        [X-Fleet]
+        # Don't schedule on the same machine as other Middle Instances
+        X-Conflicts=middle@*.service
