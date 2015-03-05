@@ -1,0 +1,8 @@
+#cloud-config
+
+coreos:
+  etcd:
+    addr: $private_ipv4:4001
+  units:
+    - name: etcd.service
+      command: start

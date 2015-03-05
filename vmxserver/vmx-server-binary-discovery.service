@@ -30,3 +30,4 @@ ExecStop=/usr/bin/etcdctl rm /hosts/vmxserver/${COREOS_PRIVATE_IPV4/binary
 [X-Fleet]
 # Schedule on the same machine as the associated Middle Service
 MachineMetadata="vmxtype=vmxserver"
+Global=true

@@ -1,0 +1,110 @@
+#cloud-config
+
+coreos:
+  fleet:
+    etcd_servers: "http:10.132.114.122//:4001"
+    public-ip: $private_ipv4   # used for fleetctl ssh command
+    metadata: \"vmxtype=vmxserver\"
+  units:
+    - name: fleet.service
+      command: start
+    - name: fleetfiles.service
+      command: start
+      content: |
+        [Service]
+        ExecStart=/usr/bin/git clone https://github.com/VISIONAI/vmx.coreos.git /home/core/fleetfiles
+    - name: mcr.service
+      command: start
+      content: |
+        Description=Matlab MCR
+        
+        Requires=docker.service
+        
+        After=docker.service
+        
+        [Service]
+        TimeoutStartSec=0
+        
+        KillMode=none
+        
+        EnvironmentFile=/etc/environment
+        
+        RemainAfterExit=yes
+
+        Restart=on-failure
+
+        ExecStartPre=-/usr/bin/docker kill vmxmcr
+        ExecStartPre=-/usr/bin/docker rm vmxmcr
+        ExecStartPre=/usr/bin/docker pull visionai/mcr-2014a
+        ExecStart=/usr/bin/docker run --name vmxmcr visionai/mcr-2014a
+        
+        ExecStop=/usr/bin/docker stop vmxmcr
+
+    - name: vmx-server-binary.service
+      command: start
+      content: |
+        Description=Makes sure the binaries are available
+        
+        Requires=mcr.service
+        
+        After=mcr.service
+
+        [Service]
+        TimeoutStartSec=0
+        
+        KillMode=none
+        
+        EnvironmentFile=/etc/environment
+
+        RemainAfterExit=yes
+        Restart=on-failure
+        
+        ExecStartPre=/usr/bin/echo Downloading binary
+        ExecStartPre=-/usr/bin/mkdir -p /home/core/vmx/build
+        ExecStartPre=-/usr/bin/wget http://files.vision.ai/vmx/VMXserver/Linux/VMXserver_Linux.stable.tar.gz -P /home/core/vmx/build
+        ExecStartPre=-/usr/bin/gzip -d /home/core/vmx/build/VMXserver_Linux.stable.tar.gz
+        ExecStartPre=-/usr/bin/tar xf /home/core/vmx/build/VMXserver_Linux.stable.tar    -C /home/core/vmx
+        ExecStart=/usr/bin/cat /home/core/vmx/build/version
+
+        ExecStop=/usr/bin/echo stopped server binary (left the files)
+        
+
+    - name: vmx-pretrained.service
+      command: start
+      content: |
+        Description=Makes sure the pretrained data is available
+        
+        Requires=vmx-server-binary.service
+        
+        After=vmx-server-binary.service
+
+        [Service]
+        TimeoutStartSec=0
+        
+        KillMode=none
+        
+        EnvironmentFile=/etc/environment
+
+        RemainAfterExit=yes
+        Restart=on-failure
+        
+        ExecStart=/bin/bash -c '\\
+         mkdir -p /home/core/vmx/data ; \\
+         cd /home/core/vmx/data  ; \\
+         wget http://files.vision.ai/vmx/pretrained/3f61ce5c7642bc2f24f7286f600b3e6b ; \\
+        '
+        ExecStop=/usr/bin/echo stopped pretrained (left the files)
+        
+
+write_files:
+  - path: /etc/profile.d/etcdctl.sh
+    permissions: 0644
+    owner: core
+    content: |
+      export ETCDCTL_PEERS="http:10.132.114.122//:4001"
+  - path: /etc/profile.d/fleetctl.sh
+    permissions: 0644
+    owner: core
+    content: |
+      export FLEETCTL_ENDPOINT=unix:///var/run/fleet.sock
+      export FLEETCTL_EXPERIMENTAL_API=true

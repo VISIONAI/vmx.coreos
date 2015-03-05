@@ -1,0 +1,32 @@
+Description=VMX Server Discovery
+
+# Requirements
+Requires=etcd.service
+Requires=vmxserver.%i.service
+
+# Dependency ordering
+After=etcd.service
+BindsTo=vmxserver.%i.service
+
+[Service]
+# Let processes take awhile to start up (for first run Docker containers)
+TimeoutStartSec=0
+
+# work correctly.
+KillMode=none
+
+# Get CoreOS environmental variables
+EnvironmentFile=/etc/environment
+
+# Pre-start and Start
+ExecStart=/bin/bash -c '\
+    while true; do \
+        etcdctl set /vmxserver/available/${COREOS_PRIVATE_IPV4}/%i \'available\' --ttl 30; \
+      sleep 20; \
+    done
+'
+ExecStop=/usr/bin/etcdctl rm /vmxserver/available/${COREOS_PRIVATE_IPV4}/%i
+
+[X-Fleet]
+# Schedule on the same machine as the associated Middle Service
+X-ConditionMachineOf=vmxserver.%i.service
