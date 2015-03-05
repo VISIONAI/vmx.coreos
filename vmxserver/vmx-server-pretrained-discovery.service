@@ -1,0 +1,32 @@
+Description=VMX Server Pretrained Data Discovery
+
+Requires=etcd.service
+Requires=fleet.service
+
+After=etcd.service
+Requires=fleet.service
+
+[Service]
+TimeoutStartSec=0
+
+KillMode=none
+
+EnvironmentFile=/etc/environment
+
+ExecStart=/bin/bash -c '\
+  while true; do \
+    ls /home/core/vmx/data
+    if [ $? -eq 0 ]; then \
+      etcdctl set /hosts/vmxserver/${COREOS_PRIVATE_IPV4}/pretrained \'ready\' --ttl 30; \
+    else \
+      etcdctl rm /hosts/vmxserver/${COREOS_PRIVATE_IPV4}/pretrained; \
+    fi; \
+    sleep 20; \
+  done'
+
+# Stop
+ExecStop=/usr/bin/etcdctl rm /hosts/vmxserver/${COREOS_PRIVATE_IPV4/pretrained
+
+[X-Fleet]
+# Schedule on the same machine as the associated Middle Service
+MachineMetadata="vmxtype=vmxserver"
