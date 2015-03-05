@@ -21,3 +21,7 @@ ExecStartPre=/usr/bin/docker pull visionai/mcr-2014a
 ExecStart=/usr/bin/docker run --name vmxmcr visionai/mcr-2014a
 
 ExecStop=/usr/bin/docker stop vmxmcr
+
+[X-Fleet]
+Global=true
+MachineMetaData="vmxtype=vmxserver"
