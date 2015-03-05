@@ -24,4 +24,4 @@ ExecStop=/usr/bin/docker stop vmxmcr
 
 [X-Fleet]
 Global=true
-MachineMetaData="vmxtype=vmxserver"
+MachineMetadata="vmxtype=vmxserver"

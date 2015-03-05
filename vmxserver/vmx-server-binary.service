@@ -21,4 +21,4 @@ ExecStop=/usr/bin/echo stopped server binary (left the files)
 
 [X-Fleet]
 Global=true
-MachineMetaData="vmxtype=vmxserver"
+MachineMetadata="vmxtype=vmxserver"
