@@ -1,11 +1,13 @@
 Description=VMX Server Main Worker
 
 # Requirements
+Requires=mcr.service
 Requires=vmx-server-binary.service
 Requires=vmx-pretrained.service
 Requires=vmxserver-discovery.%i.service
 
 # Dependency ordering
+After=mcr.service
 After=vmx-pretrained.service
 After=vmx-server-binary.service
 
