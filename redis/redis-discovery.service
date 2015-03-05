@@ -13,7 +13,7 @@ EnvironmentFile=/etc/environment
 
 ExecStart=/bin/bash -c '\
   while true; do \
-    source /etc/profile.d/etcdctl.sh
+    source /etc/profile.d/etcdctl.sh; \
     docker run --rm redis redis-cli -h ${COREOS_PRIVATE_IPV4} ping; \
     if [ $? -eq 0 ]; then \
       echo "Setting etcd value for redis.." ; \
