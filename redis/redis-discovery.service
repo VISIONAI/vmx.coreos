@@ -17,8 +17,10 @@ ExecStart=/bin/bash -c '\
   while true; do \
     docker run --rm redis redis-cli -h ${COREOS_PRIVATE_IPV4} ping; \
     if [ $? -eq 0 ]; then \
+      echo "Setting etcd value for redis.." ; \
       etcdctl set /services/redis/${COREOS_PRIVATE_IPV4} \'{"host": "%H", "ipv4_addr": ${COREOS_PRIVATE_IPV4}, "port": 6379}\' --ttl 30; \
     else \
+      echo "removing etcd value for redis.."; \
       etcdctl rm /services/redis/${COREOS_PRIVATE_IPV4}; \
     fi; \
     sleep 20; \
