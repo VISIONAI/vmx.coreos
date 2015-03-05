@@ -8,38 +8,6 @@ coreos:
   units:
     - name: fleet.service
       command: start
-    - name: fleetfiles.service
-      command: start
-      content: |
-        [Service]
-        ExecStart=/usr/bin/git clone https://github.com/VISIONAI/vmx.coreos.git /home/core/fleetfiles
-
-    - name: vmx-pretrained.service
-      command: start
-      content: |
-        Description=Makes sure the pretrained data is available
-        
-        Requires=vmx-server-binary.service
-        
-        After=vmx-server-binary.service
-
-        [Service]
-        TimeoutStartSec=0
-        
-        KillMode=none
-        
-        EnvironmentFile=/etc/environment
-
-        RemainAfterExit=yes
-        Restart=on-failure
-        
-        ExecStart=/bin/bash -c '\\
-         mkdir -p /home/core/vmx/data ; \\
-         cd /home/core/vmx/data  ; \\
-         wget http://files.vision.ai/vmx/pretrained/3f61ce5c7642bc2f24f7286f600b3e6b ; \\
-        '
-        ExecStop=/usr/bin/echo stopped pretrained (left the files)
-        
 
 write_files:
   - path: /etc/profile.d/etcdctl.sh
