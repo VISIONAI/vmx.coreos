@@ -1,8 +1,8 @@
-Description=VMX Server
+Description=VMX Server Main Worker
 
 # Requirements
-Requires=vmx-server-binary-discovery.service
-Requires=vmx-pretrained-discovery.service
+Requires=vmx-server-binary.service
+Requires=vmx-pretrained.service
 Requires=vmxserver-discovery.%i.service
 
 # Dependency ordering
