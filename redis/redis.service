@@ -13,5 +13,5 @@ EnvironmentFile=/etc/environment
 
 ExecStartPre=-/usr/bin/docker rm vmxredis
 ExecStartPre=-/usr/bin/docker pull redis
-ExecStart=/usr/bin/docker run --name vmxredis --rm redis redis-server --appendonly yes
+ExecStart=/usr/bin/docker run --name vmxredis --rm -p 6367:6367 redis redis-server --appendonly yes
 ExecStop=/usr/bin/docker stop vmxredis
