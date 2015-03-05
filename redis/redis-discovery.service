@@ -1,0 +1,14 @@
+Description=Redis Discovery
+
+Requires=etcd.service
+Requires=redis.service
+
+After=etcd.service
+BindsTo=redis.service
+
+EnvironmentFile=/etc/environment
+
+ExecStart=/bin/sh -c "while true; do etcdctl set /services/redis '${COREOS_PRIVATE_IPV4}':--ttl 60; sleep 45; done"
+
+[X-Fleet]
+MachineOf=redis.service
