@@ -15,7 +15,7 @@ EnvironmentFile=/etc/environment
 
 ExecStart=/bin/bash -c '\
   while true; do \
-    docker run --rm redis redis-cli -h ${COREOS_PRIVATE_IPV4} ping
+    docker run --rm redis redis-cli -h ${COREOS_PRIVATE_IPV4} ping; \
     if [ $? -eq 0 ]; then \
       etcdctl set /services/redis/${COREOS_PRIVATE_IPV4} \'{"host": "%H", "ipv4_addr": ${COREOS_PRIVATE_IPV4}, "port": 6379}\' --ttl 30; \
     else \
