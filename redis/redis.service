@@ -4,6 +4,11 @@ Requires=redis-discovery.service
 
 Before=redis-discovery.service
 
+[Service]
+TimeoutStartSec=0
+
+KillMode=none
+
 EnvironmentFile=/etc/environment
 
 ExecStartPre=-/usr/bin/docker rm vmxredis

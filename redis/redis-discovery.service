@@ -6,6 +6,11 @@ Requires=redis.service
 After=etcd.service
 BindsTo=redis.service
 
+[Service]
+TimeoutStartSec=0
+
+KillMode=none
+
 EnvironmentFile=/etc/environment
 
 ExecStart=/bin/sh -c "while true; do etcdctl set /services/redis '${COREOS_PRIVATE_IPV4}':--ttl 60; sleep 45; done"
