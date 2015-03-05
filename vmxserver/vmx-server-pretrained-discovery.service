@@ -15,7 +15,7 @@ EnvironmentFile=/etc/environment
 
 ExecStart=/bin/bash -c '\
   while true; do \
-    ls /home/core/vmx/data
+    ls /home/core/vmx/data ; \
     if [ $? -eq 0 ]; then \
       etcdctl set /hosts/vmxserver/${COREOS_PRIVATE_IPV4}/pretrained \'ready\' --ttl 30; \
     else \
