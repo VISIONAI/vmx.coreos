@@ -36,5 +36,5 @@ ExecStart=/usr/bin/docker run -t    --volumes-from vmxmcr  -v /home/core/vmx/dat
 ExecStop=/usr/bin/docker stop vmxservernode-%i
 
 [X-Fleet]
-# Schedule on the same machine as the associated Middle Service
+Global=true
 MachineMetadata="vmxtype=vmxserver"
