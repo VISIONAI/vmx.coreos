@@ -28,7 +28,7 @@ Restart=on-failure
 EnvironmentFile=/etc/environment
 
 # Pre-start and Start
-ExecStartPre=/usr/bin/docker pull visionai/vmx-server-node
+ExecStart=/usr/bin/docker pull visionai/vmx-server-node
 ExecStart=/bin/bash -c '\
  source /etc/profile.d/etcdctl.sh; \
  REDIS_SERVER=$(etcdctl ls /services/redis | cut -d"/" -f4 | head -n 1); \

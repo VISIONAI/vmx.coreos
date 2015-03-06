@@ -12,12 +12,12 @@ KillMode=none
 EnvironmentFile=/etc/environment
 
 RemainAfterExit=yes
+Type=oneshot
 
-Restart=on-failure
 
 ExecStartPre=-/usr/bin/docker kill vmxmcr
 ExecStartPre=-/usr/bin/docker rm vmxmcr
-ExecStartPre=/usr/bin/docker pull visionai/mcr-2014a
+ExecStart=/usr/bin/docker pull visionai/mcr-2014a
 ExecStart=/usr/bin/docker run --name vmxmcr visionai/mcr-2014a
 
 ExecStop=/usr/bin/docker stop vmxmcr

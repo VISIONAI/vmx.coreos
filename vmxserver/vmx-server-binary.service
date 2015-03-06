@@ -12,9 +12,9 @@ KillMode=none
 EnvironmentFile=/etc/environment
 
 RemainAfterExit=yes
-Restart=on-failure
+Type=oneshot
 
-ExecStartPre=-/usr/bin/docker pull visionai/vmx-server
+ExecStart=/usr/bin/docker pull visionai/vmx-server
 ExecStart=/usr/bin/docker run --name vmxserver-binary -d visionai/vmx-server
 
 ExecStop=/usr/bin/echo stopped server binary (left the files)

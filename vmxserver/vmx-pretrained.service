@@ -10,8 +10,8 @@ KillMode=none
 
 EnvironmentFile=/etc/environment
 
+Type=oneshot
 RemainAfterExit=yes
-Restart=on-failure
 
 ExecStart=/bin/bash -c '\
  mkdir -p /home/core/vmx/data ; \
