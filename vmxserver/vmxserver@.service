@@ -5,7 +5,7 @@ Requires=mcr.service
 Requires=vmx-server-binary.service
 Requires=vmx-pretrained.service
 Requires=vmxserver-license.service
-Requires=vmxserver-discovery.%i.service
+Requires=vmxserver-discovery@%i.service
 
 # Dependency ordering
 After=mcr.service
@@ -13,7 +13,7 @@ After=vmx-pretrained.service
 After=vmx-server-binary.service
 After=vmxserver-license.service
 
-Before=vmxserver-discovery.%i.service
+Before=vmxserver-discovery@%i.service
 
 [Service]
 TimeoutStartSec=0

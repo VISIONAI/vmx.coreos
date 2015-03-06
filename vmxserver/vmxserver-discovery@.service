@@ -2,7 +2,7 @@ Description=VMX Server Discovery
 
 # Requirements
 Requires=etcd.service
-Requires=vmxserver.%i.service
+Requires=vmxserver@%i.service
 
 # Dependency ordering
 After=etcd.service
@@ -21,7 +21,15 @@ EnvironmentFile=/etc/environment
 # Pre-start and Start
 ExecStart=/bin/bash -c '\
     while true; do \
-        etcdctl set /vmxserver/available/${COREOS_PRIVATE_IPV4}/%i \'available\' --ttl 30; \
+        source /etc/profile.d/etcdctl.sh; \
+        curl -f ${COREOS_PRIVATE_IPV4}:%i/check; \
+        if [ $? -eq 0 ]; then \
+          echo vmxserver worker up at ${COREOS_PRIVATE_IPV4}; \
+          etcdctl set /vmxserver/available/${COREOS_PRIVATE_IPV4}/%i \'available\' --ttl 30; \
+        else \
+          echo vmxserver not up at ${COREOS_PRIVATE_IPV4}; \
+          etcdctl rm /vmxserver/available/${COREOS_PRIVATE_IPV4}/%i \'available\' --ttl 30; \
+        fi; \
       sleep 20; \
     done \
 '
@@ -29,4 +37,4 @@ ExecStop=/usr/bin/etcdctl rm /vmxserver/available/${COREOS_PRIVATE_IPV4}/%i
 
 [X-Fleet]
 # Schedule on the same machine as the associated Middle Service
-X-ConditionMachineOf=vmxserver.%i.service
+X-ConditionMachineOf=vmxserver@%i.service
