@@ -6,7 +6,7 @@ Requires=vmxserver@%i.service
 
 # Dependency ordering
 After=etcd.service
-BindsTo=vmxserver.%i.service
+BindsTo=vmxserver@%i.service
 
 [Service]
 # Let processes take awhile to start up (for first run Docker containers)
@@ -28,7 +28,7 @@ ExecStart=/bin/bash -c '\
           etcdctl set /vmxserver/available/${COREOS_PRIVATE_IPV4}/%i \'available\' --ttl 30; \
         else \
           echo vmxserver not up at ${COREOS_PRIVATE_IPV4}; \
-          etcdctl rm /vmxserver/available/${COREOS_PRIVATE_IPV4}/%i \'available\' --ttl 30; \
+          etcdctl rm /vmxserver/available/${COREOS_PRIVATE_IPV4}/%i ; \
         fi; \
       sleep 20; \
     done \
