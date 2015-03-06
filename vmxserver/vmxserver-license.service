@@ -1,0 +1,40 @@
+Description=VMX Server Licensing Service
+
+# Requirements
+Requires=docker.service
+Requires=etcd.service
+Requires=redis-discovery.service
+Requires=mcr.service
+Requires=vmx-server-binary.service
+Requires=vmx-pretrained.service
+
+# Dependency ordering
+After=docker.service
+After=etcd.service
+After=redis-discovery.service
+After=mcr.service
+After=vmx-server-binary.service
+After=vmx-pretrained.service
+
+
+[Service]
+TimeoutStartSec=0
+
+Type=oneshot
+RemainAfterExit=yes
+
+
+# Get CoreOS environmental variables
+EnvironmentFile=/etc/environment
+
+# Pre-start and Start
+ExecStartPre=/usr/bin/docker pull visionai/vmx-server-node
+ExecStartPre=REDIS_SERVER=$(etcdctl ls /services/redis | cut -d'/' -f4 | head -n 1)
+ExecStartPre=KEY=$(docker run --rm redis redis-cli -h $REDIS_SERVER RPOP vmxlicenses)
+ExecStart=/usr/bin/docker run -t    --volumes-from vmxmcr  -v /home/core/vmx/data:/vmx/data   --volumes-from vmxserver-binary           --rm                               visionai/vmx-server-node /vmx/build/activate.sh $KEY cloud_activation
+# Stop
+ExecStop=/usr/bin/docker stop vmxservernode-%i
+
+[X-Fleet]
+# Schedule on the same machine as the associated Middle Service
+MachineMetadata="vmxtype=vmxserver"
