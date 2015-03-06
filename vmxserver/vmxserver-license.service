@@ -32,7 +32,7 @@ ExecStartPre=/usr/bin/docker pull visionai/vmx-server-node
 ExecStart=/bin/bash -c '\
  REDIS_SERVER=$(etcdctl ls /services/redis | cut -d"/" -f4 | head -n 1); \
  KEY=$(docker run --rm redis redis-cli -h $REDIS_SERVER RPOP vmxlicenses); \
- /usr/bin/docker run -t    \ 
+ /usr/bin/docker run -t    \
     --volumes-from vmxmcr  \
     -v /home/core/vmx/data:/vmx/data \
     --volumes-from vmxserver-binary  \
