@@ -21,7 +21,7 @@ After=vmx-pretrained.service
 TimeoutStartSec=0
 
 RemainAfterExit=yes
-Restart=on-failure
+Type=oneshot
 
 
 # Get CoreOS environmental variables
