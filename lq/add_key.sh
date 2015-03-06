@@ -13,5 +13,4 @@ KEY=$1
 REDIS_SERVER=$(etcdctl ls /services/redis | cut -d'/' -f4 | head -n 1)
 
 
-docker  pull redis
 docker run --rm redis redis-cli -h $REDIS_SERVER RPUSH vmxlicenses $KEY
