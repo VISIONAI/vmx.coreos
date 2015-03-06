@@ -22,7 +22,7 @@ EnvironmentFile=/etc/environment
 ExecStart=/bin/bash -c '\
     while true; do \
         source /etc/profile.d/etcdctl.sh; \
-        curl -f ${COREOS_PRIVATE_IPV4}:%i/check; \
+        curl ${COREOS_PRIVATE_IPV4}:%i/check; \
         if [ $? -eq 0 ]; then \
           echo vmxserver worker up at ${COREOS_PRIVATE_IPV4}; \
           etcdctl set /vmxserver/available/${COREOS_PRIVATE_IPV4}/%i \'available\' --ttl 30; \
