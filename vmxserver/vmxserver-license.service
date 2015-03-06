@@ -39,9 +39,6 @@ ExecStart=/bin/bash -c '\
     --rm                              \
     visionai/vmx-server-node /vmx/build/activate.sh $KEY cloud_activation \
 '
-ExecStartPre=
-ExecStartPre=
-ExecStart=
 # Stop
 ExecStop=/usr/bin/docker stop vmxservernode-%i
 
