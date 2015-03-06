@@ -28,7 +28,7 @@ EnvironmentFile=/etc/environment
 ExecStartPre=-/usr/bin/docker kill vmxservernode-%i
 ExecStartPre=-/usr/bin/docker rm vmxservernode-%i
 ExecStartPre=/usr/bin/docker pull visionai/vmx-server-node
-ExecStart=/usr/bin/docker run -t    --volumes-from vmxmcr  -v /home/core/vmx/data:/vmx/data   --volumes-from vmxserver-binary -p ${COREOS_PRIVATE_IPV4}:%i:%i   --name vmxservernode-%i          --rm                               visionai/vmx-server-node /vmx/build/VMXserver /vmx/build %i
+ExecStart=/usr/bin/docker run -t    --volumes-from vmxmcr  -v /home/core/vmx/data:/vmx/data   --volumes-from vmxserver-binary -p ${COREOS_PRIVATE_IPV4}:%i:%i   --name vmxservernode-%i          --rm                               visionai/vmx-server-node /vmx/build/VMXserver /vmx/build sid.%i none :%i
 # Stop
 ExecStop=/usr/bin/docker stop vmxservernode-%i
 
