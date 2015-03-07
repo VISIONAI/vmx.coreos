@@ -1,3 +1,4 @@
+[Unit]
 Description=VMX Server Licensing Service
 
 # Requirements

@@ -1,3 +1,4 @@
+[Unit]
 Description=Makes sure the pretrained data is available
 
 Requires=vmx-server-binary.service
