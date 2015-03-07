@@ -18,7 +18,7 @@ Type=oneshot
 ExecStartPre=-/usr/bin/docker kill vmxmcr
 ExecStartPre=-/usr/bin/docker rm vmxmcr
 ExecStart=/usr/bin/docker pull visionai/mcr-2014a
-ExecStart=/usr/bin/docker run --name vmxmcr -d visionai/mcr-2014a
+ExecStart=/usr/bin/docker run --name vmxmcr visionai/mcr-2014a
 
 ExecStop=/usr/bin/docker stop vmxmcr
 
