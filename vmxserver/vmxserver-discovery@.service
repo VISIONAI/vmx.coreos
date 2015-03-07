@@ -19,13 +19,9 @@ KillMode=none
 # Get CoreOS environmental variables
 EnvironmentFile=/etc/environment
 
-ExecStartPost=/bin/bash -c '\
-  REDIS_SERVER=$(etcdctl ls /services/redis | cut -d'/' -f4 | head -n 1) ; \
-  docker run --rm redis redis-cli -h $REDIS_SERVER LPUSH vmxworkers_ready "${COREOS_PRIVATE_IPV4}:%i" ; \
-'
 # Pre-start and Start
 ExecStart=/bin/bash -c '\
-    FIRST_RUN="true"
+    FIRST_RUN="true" ; \
     while true; do \
         source /etc/profile.d/etcdctl.sh; \
         curl ${COREOS_PRIVATE_IPV4}:%i/check; \
@@ -38,7 +34,7 @@ ExecStart=/bin/bash -c '\
         fi; \
         if [ $FIRST_RUN == "true" ]; then \
           REDIS_SERVER=$(etcdctl ls /services/redis | cut -d'/' -f4 | head -n 1) ; \
-          echo "First time we have seen this up.. updating redis server at $REDIS_SERVER"
+          echo "First time we have seen this up.. updating redis server at $REDIS_SERVER" ; \
           docker run --rm redis redis-cli -h $REDIS_SERVER LPUSH vmxworkers_ready "${COREOS_PRIVATE_IPV4}:%i" ; \
           FIRST_RUN=false ; \
         fi; \
