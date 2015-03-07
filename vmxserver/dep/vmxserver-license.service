@@ -20,14 +20,14 @@ After=vmx-pretrained.service
 TimeoutStartSec=0
 
 RemainAfterExit=yes
-Type=oneshot
+Restart=on-failure
 
 
 # Get CoreOS environmental variables
 EnvironmentFile=/etc/environment
 
 # Pre-start and Start
-ExecStart=/usr/bin/docker pull visionai/vmx-server-node
+ExecStartPre=/usr/bin/docker pull visionai/vmx-server-node
 ExecStart=/bin/bash -c '\
  source /etc/profile.d/etcdctl.sh; \
  REDIS_SERVER=$(etcdctl ls /services/redis | cut -d"/" -f4 | head -n 1); \
