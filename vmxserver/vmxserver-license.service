@@ -46,4 +46,3 @@ ExecStop=/usr/bin/docker stop vmxservernode-%i
 [X-Fleet]
 Global=true
 MachineMetadata="vmxtype=vmxserver"
-MachineOf="mcr.service"
