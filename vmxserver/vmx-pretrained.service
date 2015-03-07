@@ -18,6 +18,7 @@ ExecStart=/bin/bash -c '\
  cd /home/core/vmx/data  ; \
  wget http://files.vision.ai/vmx/pretrained/3f61ce5c7642bc2f24f7286f600b3e6b ; \
 '
+ExecStartPost=/usr/bin/echo VMX: Pretrained loaded
 ExecStop=/usr/bin/echo stopped pretrained (left the files)
 
 [X-Fleet]
