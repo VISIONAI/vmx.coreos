@@ -40,10 +40,6 @@ ExecStart=/usr/bin/docker run -t                             \
           visionai/vmx-server-node                           \
           /vmx/build/VMXserver /vmx/build sid.%i none :%i
 # When we start a worker, add the ip:port to the vmxworkers_ready queue
-ExecStartPost=/bin/bash -c '\
-  REDIS_SERVER=$(etcdctl ls /services/redis | cut -d'/' -f4 | head -n 1) ; \
-  docker run --rm redis redis-cli -h $REDIS_SERVER LPUSH vmxworkers_ready "${COREOS_PRIVATE_IPV4}:%i" ; \
-'
 ExecStop=/usr/bin/docker stop vmxservernode-%i
 
 [X-Fleet]
