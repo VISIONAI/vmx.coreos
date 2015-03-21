@@ -7,6 +7,7 @@ Requires=vmx-server-binary.service
 Requires=vmx-pretrained.service
 Requires=vmxserver-license.service
 Requires=vmx-models.service
+Requires=vmx-discovery.service
 
 # Dependency ordering
 After=mcr.service
