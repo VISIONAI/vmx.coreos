@@ -34,7 +34,7 @@ ExecStart=/bin/bash -c '\
           etcdctl rm /vmx/available/${COREOS_PRIVATE_IPV4} ; \
         fi; \
         if [ $FIRST_RUN == "true" ]; then \
-          REDIS_SERVER=$(etcdctl ls /services/redis | cut -d'/' -f4 | head -n 1) ; \
+          REDIS_SERVER=$(etcdctl ls /services/redis | cut -d"/" -f4 | head -n 1) ; \
           echo "First time we have seen this up.. updating redis server at $REDIS_SERVER" ; \
           docker run --rm redis redis-cli -h $REDIS_SERVER LPUSH vmxstacks "${COREOS_PRIVATE_IPV4}:3000" ; \
           FIRST_RUN=false ; \
