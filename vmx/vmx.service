@@ -35,6 +35,7 @@ ExecStartPre=-/usr/bin/docker pull visionai/vmx-environment
 ExecStart=/usr/bin/docker run -t                             \
           --volumes-from vmxmcr                              \
           --volumes-from vmxserver-models                    \
+          --volumes-from vmx-middle     \
           -v /home/core/vmx/data:/vmx/data                   \
           --volumes-from vmxserver-binary                    \
           --name vmx                            \
