@@ -15,6 +15,7 @@ TimeoutStartSec=0
 
 # work correctly.
 KillMode=none
+Restart=on-failure
 
 # Get CoreOS environmental variables
 EnvironmentFile=/etc/environment
@@ -27,7 +28,7 @@ ExecStart=/bin/bash -c '\
         curl ${COREOS_PRIVATE_IPV4}:3000/check; \
         if [ $? -eq 0 ]; then \
           echo vmx full stack up up at ${COREOS_PRIVATE_IPV4}; \
-          etcdctl set /vmx/available/${COREOS_PRIVATE_IPV4} \'3000\' --ttl 30; \
+          etcdctl set /vmx/available/${COREOS_PRIVATE_IPV4} 3000 --ttl 30; \
         else \
           echo vmx full stack not up at ${COREOS_PRIVATE_IPV4}; \
           etcdctl rm /vmx/available/${COREOS_PRIVATE_IPV4} ; \
