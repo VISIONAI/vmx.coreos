@@ -36,11 +36,9 @@ ExecStart=/usr/bin/docker run -t                             \
           --volumes-from vmxserver-models                    \
           -v /home/core/vmx/data:/vmx/data                   \
           --volumes-from vmxserver-binary                    \
-          --name vmxservernode-%i                            \
+          --name vmx                            \
           --rm                                               \
           -p 3000:3000          \
-          --name vmx-environment        \
-          --rm                          \
           visionai/vmx-environment /vmx/middle/vmx
 
 # When we start a worker, add the ip:port to the vmxworkers_ready queue
