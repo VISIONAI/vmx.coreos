@@ -29,6 +29,7 @@ Restart=on-failure
 EnvironmentFile=/etc/environment
 
 # Pre-start and Start
+ExecStartPre=-/usr/bin/mkdir -p /home/core/static
 ExecStartPre=-/usr/bin/docker kill vmx
 ExecStartPre=-/usr/bin/docker rm vmx
 ExecStartPre=-/usr/bin/docker pull visionai/vmx-environment
@@ -37,6 +38,7 @@ ExecStart=/usr/bin/docker run -t                             \
           --volumes-from vmxserver-models                    \
           --volumes-from vmx-middle     \
           -v /home/core/vmx/data:/vmx/data                   \
+          -v /home/core/static:/vmx/middle/static                   \
           --volumes-from vmxserver-binary                    \
           --name vmx                            \
           --rm                                               \
