@@ -50,4 +50,4 @@ ExecStop=/usr/bin/docker stop vmx
 [X-Fleet]
 # Schedule on the same machine as the associated Middle Service
 MachineMetadata="vmxtype=vmxserver"
-Gloabl=true
+Global=true

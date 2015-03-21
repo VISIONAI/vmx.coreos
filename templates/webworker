@@ -2,9 +2,9 @@
 
 coreos:
   fleet:
-    etcd_servers: http://10.132.114.122:4001
+    etcd_servers: http://10.132.85.148:4001
     public-ip: $private_ipv4   # used for fleetctl ssh command
-    metadata: \"vmxtype=webworker\"
+    metadata: "vmxtype=webworker"
   units:
     - name: fleet.service
       command: start
@@ -14,7 +14,7 @@ write_files:
     permissions: 0644
     owner: core
     content: |
-      export ETCDCTL_PEERS=\"http://10.132.114.122:4001\"
+      export ETCDCTL_PEERS="http://10.132.85.148:4001"
   - path: /etc/profile.d/fleetctl.sh
     permissions: 0644
     owner: core
