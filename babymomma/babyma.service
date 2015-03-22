@@ -10,7 +10,7 @@ After=etcd.service
 After=babyma-pre.service
 
 [Service]
-TimeoutStartSec=0
+TimeoutStartSec=30
 TimeoutSec=60
 
 
@@ -25,7 +25,7 @@ ExecStartPre=-/usr/bin/docker pull gdoteof/babymamma
 ExecStart=/bin/bash -c '\
     source /etc/profile.d/etcdctl.sh; \
     REDIS_SERVER=$(etcdctl ls /services/redis | cut -d"/" -f4 | head -n 1) ; \
-    docker run -t -p 8080:8080 -e "REDIS_HOST=$REDIS_SERVER" gdoteof/babymamma'
+    docker run -t -p 8080:8080 -e "REDIS_HOST=$REDIS_SERVER" --name babyma gdoteof/babymamma'
 ExecStop=/usr/bin/docker stop babyma
 
 [X-Fleet]
