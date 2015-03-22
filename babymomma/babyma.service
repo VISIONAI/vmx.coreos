@@ -9,7 +9,7 @@ Restart=on-failure
 EnvironmentFile=/etc/environment
 
 ExecStartPre=-/usr/bin/docker rm babyma
-ExecStartPre=-/usr/bin/docker pull gdoteof/babymamma
+ExecStartPre=/usr/bin/docker pull gdoteof/babymamma
 
 ExecStart=/bin/bash -c '\
     source /etc/profile.d/etcdctl.sh; \
