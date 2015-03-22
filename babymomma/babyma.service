@@ -12,6 +12,7 @@ ExecStartPre=-/usr/bin/docker rm babyma
 ExecStartPre=-/usr/bin/docker pull gdoteof/babymamma
 
 ExecStart=/bin/bash -c '\
+    source /etc/profile.d/etcdctl.sh; \
     REDIS_SERVER=$(etcdctl ls /services/redis | cut -d"/" -f4 | head -n 1) ; \
     docker run -t -i -p 8080:80 -e "REDIS_HOST=$REDIS_SERVER" gdoteof/babymamma'
 ExecStop=/usr/bin/docker stop babyma
