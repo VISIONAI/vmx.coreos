@@ -1,0 +1,40 @@
+[Unit]
+Description= Run a single gesture session
+
+# Requirements
+Requires=etcd.service
+Requires=vmx.service
+
+# Dependency ordering
+After=etcd.service
+After=vmx.service
+
+[Service]
+TimeoutStartSec=30
+TimeoutSec=60
+
+
+KillMode=none
+Restart=on-failure
+
+EnvironmentFile=/etc/environment
+
+
+ExecStart=/bin/bash -c '\
+      source /etc/profile.d/etcdctl.sh; \
+      REDIS_SERVER=$(etcdctl ls /services/redis | cut -d"/" -f4 | head -n 1) ; \
+      UUID1=569a262df94ae8aaab2dd866e7abb8b893c7 ; \
+      #Create a new session with the target UUID
+      SID=curl -s -X POST -H "Content-Type: application/json" -d \'{"uuids":["\'$UUID1\'"],"compiled":"true"}\' http://localhost:3000/session  | cut -d"\"" -f6 ; \
+      docker run --rm redis redis-cli -h $REDIS_SERVER sadd sessionids "$SID" ; \
+      docker run --rm redis redis-cli -h $REDIS_SERVER hadd sessions "$SID" "$COREOS_PRIVATE_IPV4" '
+ExecStop=/bin/bash -c '\
+      source /etc/profile.d/etcdctl.sh; \
+      REDIS_SERVER=$(etcdctl ls /services/redis | cut -d"/" -f4 | head -n 1) ; \
+      docker run --rm redis redis-cli -h $REDIS_SERVER srem sessionids "$SID" ; \
+      docker run --rm redis redis-cli -h $REDIS_SERVER hrem sessions "$SID" ; \
+      '
+
+[X-Fleet]
+# Schedule on the same machine as the associated Middle Service
+MachineOf=vmx.service
