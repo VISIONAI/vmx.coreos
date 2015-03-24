@@ -22,6 +22,7 @@ EnvironmentFile=/etc/environment
 
 ExecStart=/bin/bash -c '\
       source /etc/profile.d/etcdctl.sh; \
+      source /etc/environment; \
       REDIS_SERVER=$(etcdctl ls /services/redis | cut -d"/" -f4 | head -n 1) ; \
       UUID1="569a262df94ae8aaab2dd866e7abb8b893c7" ; \
       SID=$(curl -s -X POST -H "Content-Type: application/json" -d "{\"uuids\":[\"569a262df94ae8aaab2dd866e7abb8b893c7\"],\"compiled\":\"true\"}" http://localhost:3000/session  | cut -d"\"" -f6) ; \
