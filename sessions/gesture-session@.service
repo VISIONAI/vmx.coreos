@@ -23,9 +23,9 @@ EnvironmentFile=/etc/environment
 ExecStart=/bin/bash -c '\
       source /etc/profile.d/etcdctl.sh; \
       REDIS_SERVER=$(etcdctl ls /services/redis | cut -d"/" -f4 | head -n 1) ; \
-      UUID1=569a262df94ae8aaab2dd866e7abb8b893c7 ; \
+      UUID1="569a262df94ae8aaab2dd866e7abb8b893c7" ; \
       #Create a new session with the target UUID
-      SID=curl -s -X POST -H "Content-Type: application/json" -d \'{"uuids":["\'$UUID1\'"],"compiled":"true"}\' http://localhost:3000/session  | cut -d"\"" -f6 ; \
+      SID=$(curl -s -X POST -H "Content-Type: application/json" -d "{\"uuids\":[\"$UUID1\"],\"compiled\":\"true\"}" http://localhost:3000/session  | cut -d"\"" -f6) ; \
       docker run --rm redis redis-cli -h $REDIS_SERVER sadd sessionids "$SID" ; \
       docker run --rm redis redis-cli -h $REDIS_SERVER hadd sessions "$SID" "$COREOS_PRIVATE_IPV4" '
 ExecStop=/bin/bash -c '\
